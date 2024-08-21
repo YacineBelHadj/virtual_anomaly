@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "virtual-anomaly"
+version = "0.1.0"
+description = "A python package for making virtual anomalies in one dimensional data."
+authors = ["Yacine Bel-Hadj <yacine.bel-hadj@vub.be>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+torch = "^2.0.0"
+scipy = "^1.9.0"
+matplotlib = "^3.4.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.1.0"
