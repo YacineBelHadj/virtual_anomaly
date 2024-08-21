@@ -12,20 +12,20 @@ class AddSpike(nn.Module):
     
     Attributes:
         data_axis (torch.Tensor): The axis representing the data (e.g., frequency or time).
-        point_of_interest (float): The point of interest around which the harmonic modification is applied.
-        window_width (float): The width of the window around the point of interest.
+        window_center (float): The point of interest around which the harmonic modification is applied.
+        window_size (float): The width of the window around the point of interest.
         amplitude (float): The amplitude factor applied to the triangular window.
         modulation (torch.Tensor): The constructed window used to modify the signal.
     """
 
-    def __init__(self, data_axis, point_of_interest, window_width, amplitude):
+    def __init__(self, data_axis, window_center:float, window_size:float, amplitude:float):
         """
         Initialize the HarmonicModifier module.
 
         Args:
             data_axis (array-like): The axis representing the data (e.g., frequency or time).
-            point_of_interest (float): The point of interest around which the harmonic modification is applied.
-            window_width (float): The width of the window around the point of interest.
+            window_center (float): The point of interest around which the harmonic modification is applied.
+            window_size (float): The width of the window around the point of interest.
             amplitude (float): The amplitude factor applied to the triangular window.
         """
         super().__init__()
@@ -35,12 +35,12 @@ class AddSpike(nn.Module):
             data_axis = torch.tensor(data_axis, dtype=torch.float32)  # Ensure data_axis is a float32 tensor
 
         self.data_axis = data_axis
-        self.point_of_interest = point_of_interest
-        self.window_width = window_width
+        self.window_center = window_center
+        self.window_size = window_size
         self.amplitude = amplitude
-        self.modulation = self.construct_modulation(data_axis, point_of_interest, window_width, amplitude)
+        self.modulation = self.construct_modulation(data_axis, window_center, window_size, amplitude)
 
-    def construct_modulation(self, data_axis, point_of_interest, window_width, amplitude):
+    def construct_modulation(self, data_axis, window_center, window_size, amplitude):
         """
         Construct the modulation (a triangular window) that will be used to modify the signal.
 
@@ -49,19 +49,19 @@ class AddSpike(nn.Module):
 
         Args:
             data_axis (torch.Tensor): The axis representing the data.
-            point_of_interest (float): The point of interest.
-            window_width (float): The width of the window around the point of interest.
+            window_center (float): The point of interest.
+            window_size (float): The width of the window around the point of interest.
             amplitude (float): The amplitude factor for the triangular window.
 
         Returns:
             torch.Tensor: The constructed modulation window.
         """
         window = torch.ones_like(self.data_axis)  # Initialize a window with ones
-        mod_len = torch.sum(torch.abs(data_axis - point_of_interest) < window_width).item()  # Determine the length of the triangular window
+        mod_len = torch.sum(torch.abs(data_axis - window_center) < window_size).item()  # Determine the length of the triangular window
         mod_window = 1 - torch.from_numpy(windows.triang(mod_len)) * amplitude  # Create the triangular window and scale it by amplitude
 
         # Apply the window only to the region close to the point of interest
-        mask = torch.abs(data_axis - point_of_interest) < window_width
+        mask = torch.abs(data_axis - window_center) < window_size
         window[mask] = mod_window.to(window.dtype)  # Ensure the dtype of mod_window matches that of window
         return window
 

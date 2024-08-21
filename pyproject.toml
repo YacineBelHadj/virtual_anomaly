@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "virtual-anomaly"
-version = "0.1.0"
+version = "0.1.2"
 description = "A python package for making virtual anomalies in one dimensional data."
 authors = ["Yacine Bel-Hadj <yacine.bel-hadj@vub.be>"]
 readme = "README.md"

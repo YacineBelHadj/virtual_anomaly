@@ -17,13 +17,13 @@ class TestAddSpike(unittest.TestCase):
             0.1 * torch.randn_like(self.data_axis)  # Add noise to the signal
         )
         
-        self.point_of_interest = 0.5
-        self.window_width = 0.1
+        self.window_center = 0.5
+        self.window_size = 0.1
         self.amplitude = 0.5
         self.add_spike = AddSpike(
             data_axis=self.data_axis,
-            point_of_interest=self.point_of_interest,
-            window_width=self.window_width,
+            window_center=self.window_center,
+            window_size=self.window_size,
             amplitude=self.amplitude
         )
 
@@ -33,8 +33,8 @@ class TestAddSpike(unittest.TestCase):
         """
         modulation = self.add_spike.construct_modulation(
             self.data_axis,
-            self.point_of_interest,
-            self.window_width,
+            self.window_center,
+            self.window_size,
             self.amplitude
         )
 
@@ -58,8 +58,8 @@ class TestAddSpike(unittest.TestCase):
     def test_validate_psd(self):
         f, Pxx = signal.welch(self.signal, fs=25)
         f, Pxx = torch.tensor(f), torch.tensor(Pxx)
-        addspike = AddSpike(data_axis=f, point_of_interest=f[50], window_width=f[2], amplitude=0.5)
-        addspike2 = AddSpike(data_axis=f, point_of_interest=f[60], window_width=f[2], amplitude=-0.3)
+        addspike = AddSpike(data_axis=f, window_center=f[50], window_size=f[2], amplitude=0.5)
+        addspike2 = AddSpike(data_axis=f, window_center=f[60], window_size=f[2], amplitude=-0.3)
 
         output_signal = addspike(Pxx)
         output_signal2 = addspike2(Pxx)
