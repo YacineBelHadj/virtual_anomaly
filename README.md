@@ -10,6 +10,8 @@
   
 - **AddSpike**: A module that adds or alters harmonics within a PSD/ FFT, making it easier to test the ability of algorithms to detect changes in frequency components.
 
+- **FloodSignal**: A module that Flood the low part of signal with noise
+
 ## Installation
 
 You can install the package via pip:
